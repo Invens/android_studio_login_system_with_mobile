@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "435326702101",
+    "project_id": "shaadimange",
+    "storage_bucket": "shaadimange.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435326702101:android:98e3e9c3082a4e110db41c",
+        "android_client_info": {
+          "package_name": "com.codepanther.shaadimanage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "435326702101-qhg04tkvcos5bq79oedmrev27m6h4g2p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codepanther.shaadimanage",
+            "certificate_hash": "445985fb091c514355661aab3916d64f5d55d5d0"
+          }
+        },
+        {
+          "client_id": "435326702101-fg0dv5fpst0fgf9nsj8alcss435s2geo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr2FZvZCMiwFzmSeIHkggAgnK5UV7J4ZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "435326702101-fg0dv5fpst0fgf9nsj8alcss435s2geo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
