@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -29,14 +30,20 @@ public class getOtp extends AppCompatActivity {
 
     private EditText code1, code2,code3,code4,code5,code6;
 
-
+    FirebaseAuth mAuth;
+    String verification;
+    Button verify;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_otp);
 
+        verify=(Button)findViewById(R.id.verify);
         TextView textMobile = findViewById(R.id.mobile_number);
        textMobile.setText(String.format("%s",getIntent().getStringExtra("mobile")));
+       verification= getIntent().getStringExtra("verificationId");
+
+       mAuth = FirebaseAuth.getInstance();
 
             code1=findViewById(R.id.code1);
             code2=findViewById(R.id.code2);
@@ -47,6 +54,27 @@ public class getOtp extends AppCompatActivity {
 
 
                     setupOtpInput();
+
+                    verify.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String verification_code = code1.getText().toString()
+                                    + code2.getText().toString()
+                                    + code3.getText().toString()
+                                    + code4.getText().toString()
+                                    + code5.getText().toString()
+                                    + code6.getText().toString();
+                            if (!verification_code.isEmpty()) {
+                                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verification, verification_code);
+                                SignIn(credential);
+                            } else
+                            {
+                                Toast.makeText(getOtp.this, "please enter OTP", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+
     }
 
     private void setupOtpInput() {
@@ -154,5 +182,38 @@ public class getOtp extends AppCompatActivity {
 
     }
 
+    private  void SignIn(PhoneAuthCredential credential)
+    {
+        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
 
+                if (task.isSuccessful())
+                {
+                    sendToMain();
+                }
+                else
+                {
+                    Toast.makeText(getOtp.this, "OTP Invailid", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+    }
+
+    private void sendToMain() {
+
+        startActivity(new Intent(getOtp.this,home.class));
+        finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser current_user = mAuth.getCurrentUser();
+        if (current_user !=null)
+        {
+            sendToMain();
+        }
+    }
 }
