@@ -28,53 +28,69 @@ import com.google.firebase.auth.PhoneAuthProvider;
 
 public class getOtp extends AppCompatActivity {
 
-    private EditText code1, code2,code3,code4,code5,code6;
+    private EditText code1, code2, code3, code4, code5, code6;
 
     FirebaseAuth mAuth;
     String verification;
     Button verify;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_otp);
 
-        verify=(Button)findViewById(R.id.verify);
+        verify = (Button) findViewById(R.id.verify);
         TextView textMobile = findViewById(R.id.mobile_number);
-       textMobile.setText(String.format("%s",getIntent().getStringExtra("mobile")));
-       verification= getIntent().getStringExtra("verificationId");
+        textMobile.setText(String.format("%s", getIntent().getStringExtra("mobile")));
+        verification = getIntent().getStringExtra("verificationId");
 
-       mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
-            code1=findViewById(R.id.code1);
-            code2=findViewById(R.id.code2);
-            code3=findViewById(R.id.code3);
-            code4=findViewById(R.id.code4);
-            code5=findViewById(R.id.code5);
-            code6=findViewById(R.id.code6);
+        code1 = findViewById(R.id.code1);
+        code2 = findViewById(R.id.code2);
+        code3 = findViewById(R.id.code3);
+        code4 = findViewById(R.id.code4);
+        code5 = findViewById(R.id.code5);
+        code6 = findViewById(R.id.code6);
 
 
-                    setupOtpInput();
+        setupOtpInput();
 
-                    verify.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            String verification_code = code1.getText().toString()
-                                    + code2.getText().toString()
-                                    + code3.getText().toString()
-                                    + code4.getText().toString()
-                                    + code5.getText().toString()
-                                    + code6.getText().toString();
-                            if (!verification_code.isEmpty()) {
-                                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verification, verification_code);
-                                SignIn(credential);
-                            } else
-                            {
-                                Toast.makeText(getOtp.this, "please enter OTP", Toast.LENGTH_SHORT).show();
+        verify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!code1.getText().toString().isEmpty() && !code2.getText().toString().isEmpty() && !code3.getText().toString().isEmpty() &&
+                        !code4.getText().toString().isEmpty() && !code5.getText().toString().isEmpty() && !code6.getText().toString().isEmpty())
+                {
+                    String codetaken = code1.getText().toString() +
+                            code2.getText().toString() +
+                            code3.getText().toString()
+                            + code4.getText().toString() +
+                            code5.getText().toString()
+                            + code6.getText().toString();
+
+                    if (verification != null) {
+                        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verification, codetaken);
+                        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Intent intent = new Intent(getOtp.this, home.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(getOtp.this, "please check your internet connection", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
-
-
+                        });
+                     }
+                }
+                    else
+                    {
+                        Toast.makeText(getOtp.this, "please enter the otp", Toast.LENGTH_SHORT).show();
+                    }
+            }
+        });
     }
 
     private void setupOtpInput() {
@@ -88,8 +104,7 @@ public class getOtp extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (!s.toString().trim().isEmpty())
-                {
+                if (!s.toString().trim().isEmpty()) {
                     code2.requestFocus();
                 }
             }
@@ -108,8 +123,7 @@ public class getOtp extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (!s.toString().trim().isEmpty())
-                {
+                if (!s.toString().trim().isEmpty()) {
                     code3.requestFocus();
                 }
             }
@@ -128,8 +142,7 @@ public class getOtp extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (!s.toString().trim().isEmpty())
-                {
+                if (!s.toString().trim().isEmpty()) {
                     code4.requestFocus();
                 }
             }
@@ -148,8 +161,7 @@ public class getOtp extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (!s.toString().trim().isEmpty())
-                {
+                if (!s.toString().trim().isEmpty()) {
                     code5.requestFocus();
                 }
             }
@@ -168,8 +180,7 @@ public class getOtp extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (!s.toString().trim().isEmpty())
-                {
+                if (!s.toString().trim().isEmpty()) {
                     code6.requestFocus();
                 }
             }
@@ -182,38 +193,8 @@ public class getOtp extends AppCompatActivity {
 
     }
 
-    private  void SignIn(PhoneAuthCredential credential)
-    {
-        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-
-                if (task.isSuccessful())
-                {
-                    sendToMain();
-                }
-                else
-                {
-                    Toast.makeText(getOtp.this, "OTP Invailid", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-    }
-
-    private void sendToMain() {
-
-        startActivity(new Intent(getOtp.this,home.class));
-        finish();
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser current_user = mAuth.getCurrentUser();
-        if (current_user !=null)
-        {
-            sendToMain();
-        }
     }
 }
